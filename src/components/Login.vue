@@ -20,7 +20,7 @@ export default {
       console.log('Logging in with', this.email, this.password)
       if (this.email === "test@test.com" && this.password === "password") {
         this.logged = true
-        this.$router.push('/')      
+        this.$router.back()      
       } else {
         this.error = 'Invalid credentials.'
         }
@@ -30,7 +30,7 @@ export default {
 </script>
 
 <template>
-  <div class="container d-flex align-items-center justify-content-center min-vh-100">
+  <div class="container d-flex align-items-center justify-content-center min-vh-100 hero-background">
     <div class="card shadow-sm" style="width: 100%; max-width: 400px;">
       <div class="card-body p-4">
         <h3 class="card-title text-center mb-4">Log in</h3>

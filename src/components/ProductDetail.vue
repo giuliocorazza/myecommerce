@@ -1,6 +1,8 @@
 <script lang="ts">
 export default {
   name: 'ProductDetail',
+  inject: ['cartCount', 'cartItems'],
+
   props: {
     id: {
       type: String,
@@ -11,6 +13,8 @@ export default {
     return {
       product: null,
       loading: true,
+      quantity: 1,
+
     }
   },
   methods: {
@@ -23,9 +27,34 @@ export default {
           this.loading = false
         })
     },
+
     goBack() {
         this.$router.back()
         },
+
+    increaseQuantity() {
+      this.quantity++
+    },
+    decreaseQuantity() {
+      if (this.quantity > 1) {
+        this.quantity--
+      }
+    },
+    addToCart() {
+        const existing = this.cartItems.find(item => item.id === this.product.id)
+        if (existing) {
+        existing.quantity += this.quantity
+        } else {
+        this.cartItems.push({
+            id: this.product.id,
+            title: this.product.title,
+            price: this.product.price,
+            image: this.product.image,
+            quantity: this.quantity,
+        })
+        }
+        this.cartCount += this.quantity
+    },        
 
   },
   mounted() {
@@ -62,13 +91,45 @@ export default {
       <div class="col-md-7">
         
         <h2>{{ product.title }}</h2>
-        <p class="text-muted">{{ product.category }}</p>
+        <p class="text-muted">{{ product.category.toUpperCase() }}</p>
         <h4>EUR {{ product.price }}</h4>
         <p>{{ product.description }}</p>
-        <button class="btn btn-primary">Add to cart</button>
+
+          <div class="d-flex align-items-center mb-3 quantity-selector">
+            <button
+              class="btn btn-outline-secondary"
+              @click="decreaseQuantity"
+              :disabled="quantity <= 1"
+            >
+              −
+            </button>
+            <span class="mx-3 quantity-value">{{ quantity }}</span>
+            <button class="btn btn-outline-secondary" @click="increaseQuantity">
+              +
+            </button>
+          </div>
+
+
+        
+        <button class="btn btn-primary btn-lg add-to-cart" @click="addToCart">Add to cart</button>
+        <button class="btn btn-outline-primary btn-lg add-to-cart ms-2">Add to Wishlist</button>
+
       </div>
     </div>
 
   </div>
 </div>
 </template>
+
+<style scoped>
+.quantity-selector button {
+  width: 40px;
+}
+
+.quantity-value {
+  min-width: 24px;
+  text-align: center;
+  font-weight: 500;
+}
+
+</style>

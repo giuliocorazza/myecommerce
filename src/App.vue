@@ -10,8 +10,17 @@ const route = useRoute()
 
 const products = ref([])
 const categories = ref([])
-// const structuredData = ref([])
+const cartItems = ref(JSON.parse(localStorage.getItem('cartItems') || '[]'))
+watch(cartItems, (value) => {
+  localStorage.setItem('cartItems', JSON.stringify(value))
+}, { deep: true })
 
+const cartCount = computed(() =>
+  cartItems.value.reduce((sum, item) => sum + item.quantity, 0)
+)
+
+provide('cartItems', cartItems)
+provide('cartCount', cartCount)
 const logged = ref(localStorage.getItem('logged') === 'true')
 
 watch(logged, (value) => {
@@ -61,13 +70,13 @@ onMounted(() => {
 
 <template>
 <main>
-  <div v-if="logged">
+  <!-- <div v-if="logged"> -->
 <Navbar :categories="categories" @select-category="filterByCategory"/>
 <RouterView :products="filteredProducts"/>
- </div>
+ <!-- </div>
   <div v-else>
     <Login/>
-  </div>
+  </div> -->
 
 </main>
 </template>

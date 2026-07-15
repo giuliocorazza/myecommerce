@@ -13,8 +13,8 @@ export default {
       return text.charAt(0).toUpperCase() + text.slice(1)
     },
     logout() {
-      this.logged.value = false
-      this.username.value = ''
+      this.logged = false
+      this.username = ''
       this.$router.push('/')
     },
     closeMenu() {
@@ -75,11 +75,29 @@ export default {
         <router-link v-if="!logged" class="nav-link" to="/login">
           <button class="btn btn-outline-primary">Log in</button>
         </router-link>
-
-
-        <router-link v-if="logged" class="nav-link" to="/logout">
-          <button class="btn btn-outline-primary">Logout</button>
-        </router-link>
+<div class="dropdown" v-if="logged">
+  <a
+    class="nav-link dropdown-toggle"
+    href="#"
+    id="userDropdown"
+    role="button"
+    data-bs-toggle="dropdown"
+    aria-expanded="false"
+  >
+    {{ username }}
+  </a>
+  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+    <li>
+      <router-link class="dropdown-item" to="/cart" @click="closeMenu">
+        My cart
+      </router-link>
+    </li>
+    <li><hr class="dropdown-divider" /></li>
+    <li>
+      <a class="dropdown-item" href="#" @click.prevent="logout">Logout</a>
+    </li>
+  </ul>
+</div>
 
       </div>
     </div>

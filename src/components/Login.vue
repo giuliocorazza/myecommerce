@@ -16,14 +16,37 @@ export default {
         this.error = 'Please fill in both fields.'
         return
       }
-      // TODO: replace with real auth call
-      console.log('Logging in with', this.email, this.password)
-      if (this.email === "test@test.com" && this.password === "password") {
+      // const credentials = { username: 'johnd', password: 'm38rmF$' };
+
+      const credentials = { username: this.email, password: this.password};
+      fetch('https://fakestoreapi.com/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(credentials)
+      })
+        .then(response => {
+          console.log(response.status)   // e.g. 200, 401, 404
+          console.log(response.ok)       // true if status is 200-299
+
+          if (!response.ok) {
+            throw new Error(`Login failed with status ${response.status}`)
+          }
+          return response.json()
+        })
+        .then(data => console.log(data))
+        .catch(e => console.error(e))
+        
+        this.username = this.email
         this.logged = true
         this.$router.back()      
-      } else {
-        this.error = 'Invalid credentials.'
-        }
+
+      // TODO: replace with real auth call
+      // console.log('Logging in with', this.email, this.password)
+      // if (this.email === "test@test.com" && this.password === "password") {
+      //   this.username = this.email
+      // } else {
+      //   this.error = 'Invalid credentials.'
+      //   }
     },
   },
 }
@@ -45,9 +68,9 @@ export default {
             <input
               id="email"
               v-model="email"
-              type="email"
+              type="username"
               class="form-control"
-              placeholder="name@example.com"
+              placeholder="Username"
               required
             />
           </div>

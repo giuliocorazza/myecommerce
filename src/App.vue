@@ -5,8 +5,11 @@ import { useRoute, RouterView } from 'vue-router'
 import Catalogue from './components/Catalogue.vue'
 import Navbar from './components/Navbar.vue'
 import Login from './components/Login.vue'
+import LoadingSpinner from './components/LoadingSpinner.vue'
 
 const route = useRoute()
+const loading = ref(true)
+provide('loading', loading)
 
 const products = ref([])
 const categories = ref([])
@@ -39,12 +42,15 @@ provide('username', username)
 
 
 function loadData() {
+  loading.value = true
   fetch('https://fakestoreapi.com/products')
     .then(res => res.json())
     .then(x => {
       products.value = x
       listCategories()
-      // structureData()
+    }).finally(()=> {
+      loading.value = false;
+
     })
 }
 
@@ -70,18 +76,33 @@ onMounted(() => {
 
 <template>
 <main>
-  <!-- <div v-if="logged"> -->
-<Navbar :categories="categories" @select-category="filterByCategory"/>
+
+<LoadingSpinner v-if="loading" />
+
+<Navbar :categories="categories"/>
+
+
 <RouterView :products="filteredProducts"/>
- <!-- </div>
-  <div v-else>
-    <Login/>
-  </div> -->
 
 </main>
 </template>
 
 
 <style scoped>
+.top-loading-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  background: linear-gradient(90deg, #0d6efd, #6ea8fe, #0d6efd);
+  background-size: 200% 100%;
+  animation: loadingSlide 1s linear infinite;
+  z-index: 2000;
+}
 
+@keyframes loadingSlide {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
 </style>

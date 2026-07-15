@@ -70,9 +70,7 @@ export default {
 </script>
 
 <template>
- <div class="container">
-  <div v-if="loading" class="text-center py-5">Loading...</div>
-  <div v-else-if="product" class="container">
+ <div v-if="product" class="container">
 
     <div class="row py-5">
         <div class="col-md-8"></div>
@@ -117,7 +115,6 @@ export default {
       </div>
     </div>
 
-  </div>
 </div>
 </template>
 

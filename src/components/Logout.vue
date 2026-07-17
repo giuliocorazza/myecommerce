@@ -4,7 +4,6 @@ export default {
  inject: ['logged', 'username'],
   data() {
     return {
-      email: '',
       password: '',
       error: '',
     }

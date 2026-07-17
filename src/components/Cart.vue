@@ -50,25 +50,39 @@ export default {
       <div
         v-for="item in cartItems"
         :key="item.id"
-        class="row align-items-center border-bottom py-3"
+        class="row align-items-center border-bottom py-3 g-2"
       >
-        <div class="col-2">
-          <img :src="item.image" :alt="item.title" class="img-fluid" style="max-height: 80px;" />
+        <!-- image: full row on mobile, own column on desktop -->
+        <div class="col-12 col-md-2 text-center text-md-start">
+          <img :src="item.image" :alt="item.title" class="img-fluid cart-item-image" />
         </div>
-        <div class="col-4">
-          <h6>{{ item.title }}</h6>
+
+        <!-- title -->
+        <div class="col-12 col-md-4 mt-2 mt-md-0">
+          <router-link :to="`/product/${item.id}`" class="product-title-link">
+            <h6 class="mb-1">{{ item.title }}</h6>
+          </router-link>
           <small class="text-muted">EUR {{ item.price }}</small>
         </div>
-        <div class="col-3 d-flex align-items-center">
+
+        <!-- quantity -->
+        <div class="col-6 col-md-3 d-flex align-items-center mt-2 mt-md-0">
           <button class="btn btn-sm btn-outline-secondary" @click="decrease(item)">−</button>
           <span class="mx-3">{{ item.quantity }}</span>
           <button class="btn btn-sm btn-outline-secondary" @click="increase(item)">+</button>
         </div>
-        <div class="col-2">
+
+        <!-- price -->
+        <div class="col-4 col-md-2 mt-2 mt-md-0">
           <b>EUR {{ (item.price * item.quantity).toFixed(2) }}</b>
         </div>
-        <div class="col-1">
-          <button class="btn btn-sm btn-link text-danger" @click="removeItem(item)">✕</button>
+
+        <!-- delete -->
+        <div class="col-2 col-md-1 text-end mt-2 mt-md-0">
+          <button class="btn btn-sm btn-link text-danger" @click="removeItem(item)">
+                    <img class="cart-icon" src="../assets/trash-can-regular-full.svg" alt="" width="30" />
+
+          </button>
         </div>
       </div>
 
@@ -82,3 +96,18 @@ export default {
     </div>
   </div>
 </template>
+
+<style scoped>
+.cart-item-image {
+  max-height: 80px;
+  width: 100%;
+  object-fit: contain;
+}
+
+@media (max-width: 767px) {
+  .cart-item-image {
+    max-height: 120px;
+    width: auto;
+  }
+}
+</style>

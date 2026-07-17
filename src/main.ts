@@ -3,7 +3,6 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import Catalogue from './components/Catalogue.vue'
 import ProductDetail from './components/ProductDetail.vue'
-import Login from './components/Login.vue'
 import Logout from './components/Logout.vue'
 import Cart from './components/Cart.vue'
 
@@ -11,17 +10,17 @@ import { createWebHistory, createRouter } from 'vue-router'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faCartShopping } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-
+import Wishlist from './views/Wishlist.vue'
+import { showLoginModal, loginPrompt } from './authState'
 library.add(faCartShopping)
 
 const routes = [
   { path: '/', component: Catalogue },
   { path: '/category/:category', component: Catalogue, props: true },
   { path: '/product/:id', component: ProductDetail, props: true },
-  { path: '/login', component: Login },
   { path: '/logout', component: Logout },
-  { path: '/cart', component: Cart },
+  { path: '/cart', component: Cart, meta: { requiresAuth: true } },
+  { path: '/wishlist', component: Wishlist, meta: { requiresAuth: true } },
 
 
 ]
@@ -31,4 +30,16 @@ export const router = createRouter({
   routes,
 })
 
+
+router.beforeEach((to, from, next) => {
+  const isLoggedIn = localStorage.getItem('logged') === 'true'
+
+  if (to.meta.requiresAuth && !isLoggedIn) {
+    loginPrompt.value = 'You have to login to proceed.'
+    showLoginModal.value = true
+    next('/')
+  } else {
+    next()
+  }
+})
 createApp(App).use(router).mount('#app')

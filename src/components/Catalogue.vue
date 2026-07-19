@@ -1,13 +1,13 @@
-<script lang="ts">
-export default {
-  name: 'Home',
-  props: {
-    products: {
-      type: Array,
-      default: () => [],
-    },
+<script setup lang="ts">
+import type { PropType } from 'vue'
+import type { Product } from '../types'
+
+defineProps({
+  products: {
+    type: Array as PropType<Product[]>,
+    default: () => [],
   },
-}
+})
 </script>
 
 <template>
@@ -20,7 +20,12 @@ export default {
           </div>
           <div class="card-body d-flex flex-column">
             <span class="category-label">{{ product.category }}</span>
+            <router-link :to="`/product/${product.id}`">
+
             <h5 class="card-title">{{ product.title }}</h5>
+              </router-link>
+
+
             <div class="mt-auto d-flex justify-content-between align-items-center pt-2">
               <b class="price">EUR {{ product.price }}</b>
               <router-link :to="`/product/${product.id}`" class="btn btn-primary btn-sm">

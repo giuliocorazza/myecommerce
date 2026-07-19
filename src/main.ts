@@ -1,10 +1,10 @@
 import './assets/main.css'
 import { createApp } from 'vue'
 import App from './App.vue'
-import Catalogue from './components/Catalogue.vue'
-import ProductDetail from './components/ProductDetail.vue'
+import Catalogue from './views/Catalogue.vue'
+import ProductDetail from './views/ProductDetail.vue'
 import Logout from './components/Logout.vue'
-import Cart from './components/Cart.vue'
+import Cart from './views/Cart.vue'
 
 import { createWebHistory, createRouter } from 'vue-router'
 

@@ -2,7 +2,7 @@
 import { ref, provide, computed, onMounted, watch } from 'vue'
 import { useRoute, RouterView } from 'vue-router'
 
-import Catalogue from './components/Catalogue.vue'
+import Catalogue from './views/Catalogue.vue'
 import Navbar from './components/Navbar.vue'
 import LoginModal from './components/LoginModal.vue'
 import LoadingSpinner from './components/LoadingSpinner.vue'

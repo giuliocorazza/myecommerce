@@ -1,41 +1,38 @@
-# vue-project
+## Uso dell'intelligenza artificiale per la generazione di codice
+In questo progetto è stata utilizzata l'intelligenza artificiale per generare parte del codice sorgente. L'IA ha contribuito a scrivere funzioni e componenti. Per validare la corretteazza del codice generato, ho effettuato test manuali a seguito di ogni generazione di codice. 
+L'analisi funzionale e l'esperienza utente sono state progettate da me, senza l'ausilio dell'intelligenza artificiale.
 
-This template should help get you started developing with Vue 3 in Vite.
-
-## Recommended IDE Setup
-
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
-
-## Recommended Browser Setup
-
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
-
-## Type Support for `.vue` Imports in TS
-
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
 
 ## Project Setup
 
+# 0 - Installare Node.js e npm se non sono già installati. Posso essere scaricati da [qui](https://nodejs.org/en/download/).
+
+# 1 - Aprire un terminale nella cartella di destinazione e clonare il progetto dal repository GitHub
+```sh
+git clone https://github.com/giuliocorazza/myecommerce
+```
+# 2a - Posizionarsi nella cartella del progetto
+```sh
+cd myecommerce
+```
+
+# 2 - Lanciare da terminale per installare l'ultima versione di Vue.js
+```sh
+npm install vue@latest
+```
+
+# 3 - Installare le dipendenze del progetto
 ```sh
 npm install
 ```
 
-### Compile and Hot-Reload for Development
+# 4 - Lanciare l'applicazione in modalità di sviluppo e Hot-Reload
 
 ```sh
 npm run dev
 ```
 
-### Type-Check, Compile and Minify for Production
+# 5 - Per fare la build del progetto per la produzione, eseguire il seguente comando:
 
 ```sh
 npm run build

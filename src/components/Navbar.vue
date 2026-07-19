@@ -1,62 +1,71 @@
-<script lang="ts">
-export default {
-  name: 'Navbar',
-  inject: ['logged', 'username', 'cartCount', 'showLoginModal', 'wishlistItems', 'cartItems', ],
-  props: {
-    categories: {
-      type: Array,
-      default: () => [],
-    },
-  },
-  data() {
-    return {
-      cartBump: false,
-      wishlistBump: false,
-    }
-  },
-  watch: {
-    cartCount() {
-      this.cartBump = true
-      setTimeout(() => { this.cartBump = false }, 400)
-    },
-    'wishlistItems.length'() {
-      this.wishlistBump = true
-      setTimeout(() => { this.wishlistBump = false }, 400)
-    },
-  },
-  methods: {
-    capitalize(text: string) {
-      return text.charAt(0).toUpperCase() + text.slice(1)
-    },
-    logout() {
-      const key = this.username
-      if (key) {
-        localStorage.setItem(`cart_${key}`, JSON.stringify(this.cartItems))
-        localStorage.setItem(`wishlist_${key}`, JSON.stringify(this.wishlistItems))
-      }
-      this.logged = false
-      this.username = ''
-      this.cartItems = []
-      this.wishlistItems = []
+<script setup lang="ts">
+import { inject, ref, watch } from 'vue'
+import type { ComputedRef, Ref } from 'vue'
+import { useRouter } from 'vue-router'
+import type { CartItem, WishlistItem } from '../types'
 
-
-      this.closeMenu()
-      this.$router.push('/')
-    },
-    openLogin() {
-      this.loginPrompt = ''
-      this.showLoginModal = true
-      this.closeMenu()
-    },
-    closeMenu() {
-      const collapseEl = document.getElementById('navbarSupportedContent')
-      if (collapseEl && collapseEl.classList.contains('show')) {
-        // @ts-ignore — bootstrap is loaded globally via CDN script
-        const bsCollapse = bootstrap.Collapse.getInstance(collapseEl) || new bootstrap.Collapse(collapseEl)
-        bsCollapse.hide()
-      }
-    },
+defineProps({
+  categories: {
+    type: Array as () => string[],
+    default: () => [],
   },
+})
+
+const logged = inject<Ref<boolean>>('logged')!
+const username = inject<Ref<string>>('username')!
+const cartCount = inject<ComputedRef<number>>('cartCount')!
+const showLoginModal = inject<Ref<boolean>>('showLoginModal')!
+const wishlistItems = inject<Ref<WishlistItem[]>>('wishlistItems')!
+const cartItems = inject<Ref<CartItem[]>>('cartItems')!
+const loginPrompt = inject<Ref<string>>('loginPrompt')!
+
+const router = useRouter()
+
+const cartBump = ref(false)
+const wishlistBump = ref(false)
+
+watch(cartCount, () => {
+  cartBump.value = true
+  setTimeout(() => { cartBump.value = false }, 400)
+})
+
+watch(() => wishlistItems.value.length, () => {
+  wishlistBump.value = true
+  setTimeout(() => { wishlistBump.value = false }, 400)
+})
+
+function capitalize(text: string) {
+  return text.charAt(0).toUpperCase() + text.slice(1)
+}
+
+function logout() {
+  const key = username.value
+  if (key) {
+    localStorage.setItem(`cart_${key}`, JSON.stringify(cartItems.value))
+    localStorage.setItem(`wishlist_${key}`, JSON.stringify(wishlistItems.value))
+  }
+  logged.value = false
+  username.value = ''
+  cartItems.value = []
+  wishlistItems.value = []
+
+  closeMenu()
+  router.push('/')
+}
+
+function openLogin() {
+  loginPrompt.value = ''
+  showLoginModal.value = true
+  closeMenu()
+}
+
+function closeMenu() {
+  const collapseEl = document.getElementById('navbarSupportedContent')
+  if (collapseEl && collapseEl.classList.contains('show')) {
+    // @ts-ignore — bootstrap is loaded globally via CDN script
+    const bsCollapse = bootstrap.Collapse.getInstance(collapseEl) || new bootstrap.Collapse(collapseEl)
+    bsCollapse.hide()
+  }
 }
 </script>
 

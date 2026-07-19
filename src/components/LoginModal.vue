@@ -1,55 +1,56 @@
-<script lang="ts">
-export default {
-  name: 'LoginModal',
-inject: ['logged', 'username', 'showLoginModal', 'loginPrompt', 'cartItems', 'wishlistItems'],
-  data() {
-    return {
-      password: '',
-      error: '',
-    }
-  },
-  methods: {
-    close() {
-      this.showLoginModal = false
-      this.loginPrompt = ''
-      this.error = ''
-      this.password = ''
-    },
-    handleSubmit() {
-      this.error = ''
-      if (!this.username || !this.password) {
-        this.error = 'Please fill in both fields.'
-        return
+<script setup lang="ts">
+import { inject, ref } from 'vue'
+import type { Ref } from 'vue'
+import type { CartItem, WishlistItem } from '../types'
+import { showLoginModal, loginPrompt } from '../authState'
+
+const logged = inject<Ref<boolean>>('logged')!
+const username = inject<Ref<string>>('username')!
+const cartItems = inject<Ref<CartItem[]>>('cartItems')!
+const wishlistItems = inject<Ref<WishlistItem[]>>('wishlistItems')!
+
+const password = ref('')
+const error = ref('')
+
+function close() {
+  showLoginModal.value = false
+  loginPrompt.value = ''
+  error.value = ''
+  password.value = ''
+}
+
+function handleSubmit() {
+  error.value = ''
+  if (!username.value || !password.value) {
+    error.value = 'Please fill in both fields.'
+    return
+  }
+
+  const credentials = { username: username.value, password: password.value }
+  fetch('https://fakestoreapi.com/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(credentials)
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`Login failed with status ${response.status}`)
       }
+      return response.json()
+    })
+    .then(() => {
+      logged.value = true
 
-      const credentials = { username: this.username, password: this.password }
-      fetch('https://fakestoreapi.com/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(credentials)
-      })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error(`Login failed with status ${response.status}`)
-          }
-          return response.json()
-        })
-        .then(data => {
-          this.logged = true
-          this.username = this.username
+      const savedCart = localStorage.getItem(`cart_${username.value}`)
+      const savedWishlist = localStorage.getItem(`wishlist_${username.value}`)
+      cartItems.value = savedCart ? JSON.parse(savedCart) : []
+      wishlistItems.value = savedWishlist ? JSON.parse(savedWishlist) : []
 
-          const savedCart = localStorage.getItem(`cart_${this.username}`)
-          const savedWishlist = localStorage.getItem(`wishlist_${this.username}`)
-          this.cartItems = savedCart ? JSON.parse(savedCart) : []
-          this.wishlistItems = savedWishlist ? JSON.parse(savedWishlist) : []
-
-          this.close()
-        })
-        .catch(() => {
-          this.error = 'Invalid credentials.'
-        })
-    },
-  },
+      close()
+    })
+    .catch(() => {
+      error.value = 'Invalid credentials.'
+    })
 }
 </script>
 

@@ -1,31 +1,32 @@
-<script lang="ts">
-export default {
-  name: 'Wishlist',
-  inject: ['wishlistItems', 'cartItems', 'cartCount'],
-  methods: {
-    moveToCart(item) {
-      const existing = this.cartItems.find(i => i.id === item.id)
-      if (existing) {
-        existing.quantity += 1
-      } else {
-        this.cartItems.push({
-          id: item.id,
-          title: item.title,
-          price: item.price,
-          image: item.image,
-          quantity: 1,
-        })
-      }
-      this.cartCount += 1
-      this.removeItem(item)
-    },
-    removeItem(item) {
-      const index = this.wishlistItems.findIndex(i => i.id === item.id)
-      if (index !== -1) {
-        this.wishlistItems.splice(index, 1)
-      }
-    },
-  },
+<script setup lang="ts">
+import { inject } from 'vue'
+import type { Ref } from 'vue'
+import type { CartItem, WishlistItem } from '../types'
+
+const wishlistItems = inject<Ref<WishlistItem[]>>('wishlistItems')!
+const cartItems = inject<Ref<CartItem[]>>('cartItems')!
+
+function moveToCart(item: WishlistItem) {
+  const existing = cartItems.value.find((i: CartItem) => i.id === item.id)
+  if (existing) {
+    existing.quantity += 1
+  } else {
+    cartItems.value.push({
+      id: item.id,
+      title: item.title,
+      price: item.price,
+      image: item.image,
+      quantity: 1,
+    })
+  }
+  removeItem(item)
+}
+
+function removeItem(item: WishlistItem) {
+  const index = wishlistItems.value.findIndex((i: WishlistItem) => i.id === item.id)
+  if (index !== -1) {
+    wishlistItems.value.splice(index, 1)
+  }
 }
 </script>
 

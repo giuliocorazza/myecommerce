@@ -1,124 +1,126 @@
-<script lang="ts">
-export default {
-  name: 'ProductDetail',
-  inject: ['cartCount', 'cartItems', 'wishlistItems', 'logged', 'showLoginModal', 'loginPrompt'],
+<script setup lang="ts">
+import { inject, ref, watch, onMounted } from 'vue'
+import type { Ref } from 'vue'
+import { useRouter } from 'vue-router'
+import type { Product, CartItem, WishlistItem } from '../types'
 
-  props: {
-    id: {
-      type: String,
-      required: true,
-    },
+const props = defineProps({
+  id: {
+    type: String,
+    required: true,
   },
-  data() {
-    return {
-      product: null,
-      loading: true,
-      quantity: 1,
-      showAddedToast: false,
-      cartJustAdded: false,
-      wishlistJustAdded: false,      
-    }
-  },
-  methods: {
-    loadProduct() {
-      this.loading = true
-      fetch(`https://fakestoreapi.com/products/${this.id}`)
-        .then(res => res.json())
-        .then(data => {
-          this.product = data
-          this.loading = false
-        })
-    },
+})
 
-    goBack() {
-      this.$router.back()
-    },
+const cartItems = inject<Ref<CartItem[]>>('cartItems')!
+const wishlistItems = inject<Ref<WishlistItem[]>>('wishlistItems')!
+const logged = inject<Ref<boolean>>('logged')!
+const showLoginModal = inject<Ref<boolean>>('showLoginModal')!
+const loginPrompt = inject<Ref<string>>('loginPrompt')!
 
-    increaseQuantity() {
-      this.quantity++
-    },
-    decreaseQuantity() {
-      if (this.quantity > 1) {
-        this.quantity--
-      }
-    },
+const router = useRouter()
 
-    handleAddToCart() {
-      if (!this.logged) {
-        this.loginPrompt = 'You have to login to proceed.'
+const product = ref<Product | null>(null)
+const loading = ref(true)
+const quantity = ref(1)
+const showAddedToast = ref(false)
+const cartJustAdded = ref(false)
+const wishlistJustAdded = ref(false)
 
-        this.showLoginModal = true
-        return
-      }
-      this.addToCart()
-    },
-
-    handleGoToCart(navigate) {
-      if (!this.logged) {
-        this.loginPrompt = 'You have to login to proceed.'
-        this.showLoginModal = true
-        return
-      }
-      navigate()
-    },
-
-    handleAddToWishlist() {
-      if (!this.logged) {
-        this.loginPrompt = 'You have to login to proceed.'
-        this.showLoginModal = true
-        return
-      }
-      this.addToWishlist()
-    },
-
-
-
-    addToCart() {
-      const existing = this.cartItems.find(item => item.id === this.product.id)
-      if (existing) {
-        existing.quantity += this.quantity
-      } else {
-        this.cartItems.push({
-          id: this.product.id,
-          title: this.product.title,
-          price: this.product.price,
-          image: this.product.image,
-          quantity: this.quantity,
-        })
-      }
-      this.cartCount += this.quantity
-
-      this.showAddedToast = true
-      setTimeout(() => {
-        this.showAddedToast = false
-      }, 2000)
-    },
-
-  addToWishlist() {
-    const existing = this.wishlistItems.find(item => item.id === this.product.id)
-    if (!existing) {
-      this.wishlistItems.push({
-        id: this.product.id,
-        title: this.product.title,
-        price: this.product.price,
-        image: this.product.image,
-      })
-    }
-    this.wishlistJustAdded = true
-    setTimeout(() => { this.wishlistJustAdded = false }, 1200)
-
-  },
-
-  },
-  mounted() {
-    this.loadProduct()
-  },
-  watch: {
-    id() {
-      this.loadProduct()
-    },
-  },
+function loadProduct() {
+  loading.value = true
+  fetch(`https://fakestoreapi.com/products/${props.id}`)
+    .then(res => res.json())
+    .then((data: Product) => {
+      product.value = data
+      loading.value = false
+    })
 }
+
+function goBack() {
+  router.back()
+}
+
+function increaseQuantity() {
+  quantity.value++
+}
+function decreaseQuantity() {
+  if (quantity.value > 1) {
+    quantity.value--
+  }
+}
+
+function handleAddToCart() {
+  if (!logged.value) {
+    loginPrompt.value = 'You have to login to proceed.'
+    showLoginModal.value = true
+    return
+  }
+  addToCart()
+}
+
+function handleGoToCart(navigate: () => void) {
+  if (!logged.value) {
+    loginPrompt.value = 'You have to login to proceed.'
+    showLoginModal.value = true
+    return
+  }
+  navigate()
+}
+
+function handleAddToWishlist() {
+  if (!logged.value) {
+    loginPrompt.value = 'You have to login to proceed.'
+    showLoginModal.value = true
+    return
+  }
+  addToWishlist()
+}
+
+function addToCart() {
+  if (!product.value) return
+  const current = product.value
+  const existing = cartItems.value.find((item: CartItem) => item.id === current.id)
+  if (existing) {
+    existing.quantity += quantity.value
+  } else {
+    cartItems.value.push({
+      id: current.id,
+      title: current.title,
+      price: current.price,
+      image: current.image,
+      quantity: quantity.value,
+    })
+  }
+
+  showAddedToast.value = true
+  setTimeout(() => {
+    showAddedToast.value = false
+  }, 2000)
+}
+
+function addToWishlist() {
+  if (!product.value) return
+  const current = product.value
+  const existing = wishlistItems.value.find((item: WishlistItem) => item.id === current.id)
+  if (!existing) {
+    wishlistItems.value.push({
+      id: current.id,
+      title: current.title,
+      price: current.price,
+      image: current.image,
+    })
+  }
+  wishlistJustAdded.value = true
+  setTimeout(() => { wishlistJustAdded.value = false }, 1200)
+}
+
+onMounted(() => {
+  loadProduct()
+})
+
+watch(() => props.id, () => {
+  loadProduct()
+})
 </script>
 
 <template>

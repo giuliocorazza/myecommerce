@@ -1,39 +1,33 @@
-<script lang="ts">
-export default {
-  name: 'Cart',
-  inject: ['cartItems', 'cartCount'],
-  computed: {
-    total() {
-      return this.cartItems
-        .reduce((sum, item) => sum + item.price * item.quantity, 0)
-        .toFixed(2)
-    },
-  },
-  methods: {
-    increase(item) {
-      item.quantity++
-      this.cartCount++
-    },
-    decrease(item) {
-      if (item.quantity > 1) {
-        item.quantity--
-        this.cartCount--
+<script setup lang="ts">
+import { inject, computed } from 'vue'
+import type { Ref } from 'vue'
+import type { CartItem } from '../types'
 
-      } else {
-        this.removeItem(item)
-        this.cartCount--
+const cartItems = inject<Ref<CartItem[]>>('cartItems')!
 
-      }
-    },
-    removeItem(item) {
-      const index = this.cartItems.findIndex(i => i.id === item.id)
-      if (index !== -1) {
-        this.cartCount -= this.cartItems[index].quantity
-        this.cartItems.splice(index, 1)
-      
-      }
-    },
-  },
+const total = computed(() =>
+  cartItems.value
+    .reduce((sum: number, item: CartItem) => sum + item.price * item.quantity, 0)
+    .toFixed(2)
+)
+
+function increase(item: CartItem) {
+  item.quantity++
+}
+
+function decrease(item: CartItem) {
+  if (item.quantity > 1) {
+    item.quantity--
+  } else {
+    removeItem(item)
+  }
+}
+
+function removeItem(item: CartItem) {
+  const index = cartItems.value.findIndex((i: CartItem) => i.id === item.id)
+  if (index !== -1) {
+    cartItems.value.splice(index, 1)
+  }
 }
 </script>
 

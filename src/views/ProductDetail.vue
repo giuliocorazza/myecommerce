@@ -203,6 +203,14 @@ watch(() => props.id, () => {
       </div>
     </transition>
 
+    <transition name="toast-fade">
+      <div v-if="wishlistJustAdded" class="wishlist-toast d-md-none">
+        Added to wishlist
+      </div>
+    </transition>
+
+
+
   </div>
 </template>
 
@@ -234,6 +242,20 @@ watch(() => props.id, () => {
   left: 50%;
   transform: translateX(-50%);
   background: #198754;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 1080;
+}
+
+.wishlist-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #6f42c1;
   color: white;
   padding: 10px 20px;
   border-radius: 8px;
